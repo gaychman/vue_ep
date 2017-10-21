@@ -10,6 +10,8 @@
   "license": "ISC",
   "dependencies": {
     "@aspnet/signalr-client": "^1.0.0-alpha1-final",
+    "@websanova/vue-auth": "^2.18.3-beta",
+    "jwt-decode": "^2.2.0",
     "vue-authenticate": "^1.2.7",
     "vue-material": "^0.7.5",
     "vue-resource": "^1.3.4",

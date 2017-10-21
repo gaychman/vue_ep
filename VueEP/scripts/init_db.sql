@@ -1,0 +1,24 @@
+﻿CREATE TABLE [dbo].[news](
+	[id] [int] IDENTITY(1,1) NOT NULL,
+	[date] [datetime] NOT NULL,
+	[title] [nvarchar](max) NOT NULL,
+	[description] [text] NOT NULL,
+ CONSTRAINT [PK_news] PRIMARY KEY CLUSTERED 
+(
+	[id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+GO
+
+CREATE TABLE [dbo].[users](
+	[id] [int] IDENTITY(1,1) NOT NULL,
+	[email] [nvarchar](255) NULL,
+	[login] [nvarchar](64) NULL,
+	[password] [nvarchar](64) NULL,
+	[salt] [binary](32) NULL,
+ CONSTRAINT [PK_users] PRIMARY KEY CLUSTERED 
+(
+	[id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY]
+GO

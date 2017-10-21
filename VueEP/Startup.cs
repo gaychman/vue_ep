@@ -13,6 +13,9 @@ using Microsoft.AspNetCore.Http;
 using System.Data;
 using System.Data.SqlClient;
 using MongoDB.Driver;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 
 namespace VueEP
 {
@@ -34,6 +37,25 @@ namespace VueEP
         public void ConfigureServices(IServiceCollection services)
         {
             // Add framework services.
+            services.AddAuthentication(o =>
+            {
+                o.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                o.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            }).AddJwtBearer(cfg =>
+            {
+                cfg.RequireHttpsMetadata = false;
+                cfg.SaveToken = true;
+
+                cfg.TokenValidationParameters = new TokenValidationParameters()
+                {
+                    ValidIssuer = Configuration["Token:Issuer"],
+                    ValidAudience = Configuration["Token:Issuer"],
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["Token:Key"])),
+                    ValidateIssuerSigningKey = true,
+                    ValidateLifetime = true 
+                };
+            });
+
             services.AddMvc();
             services.AddSignalR();
 
@@ -43,8 +65,9 @@ namespace VueEP
                 var _client = new MongoClient(Configuration.GetSection("MongoDB").GetValue<String>("Url"));
                 return _client.GetDatabase(Configuration.GetSection("MongoDB").GetValue<String>("Database"));
             });
-
+            services.AddScoped<IConfigurationRoot>(options => Configuration);
             services.Configure<IConfigurationRoot>(Configuration);
+            
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -52,23 +75,22 @@ namespace VueEP
         {
             loggerFactory.AddConsole(Configuration.GetSection("Logging"));
             loggerFactory.AddDebug();
-
-            if (env.IsDevelopment())
-            {
-                app.UseDeveloperExceptionPage();
-            }
-
-            app.UseDefaultFiles().UseStaticFiles().UseMvc();
             app.Use(async (context, next) =>
             {
                 await next();
                 if (context.Response.StatusCode == 404)
                 {
-                    context.Request.Path = "index.html";
+                    context.Request.Path = "/index.html";
                     context.Response.StatusCode = 200;
                     await next();
                 }
-            });            
+            }); 
+            app.UseDefaultFiles().UseStaticFiles().UseAuthentication().UseMvc();
+            
+            if (env.IsDevelopment())
+            {
+                app.UseDeveloperExceptionPage();
+            }           
         }
     }
 }

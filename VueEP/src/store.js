@@ -1,19 +1,14 @@
 ﻿import Vue from 'vue';
-import VueMaterial from 'vue-material';
-import VueResource from 'vue-resource';
-import VueRouter from 'vue-router';
 import Vuex from 'vuex';
 import VueAuthenticate from 'vue-authenticate';
 
-Vue.use(VueMaterial);
-Vue.use(VueResource);
-Vue.use(VueRouter);
 Vue.use(Vuex);
 
 var vueAuth = VueAuthenticate.factory(Vue.http, {
     baseUrl: ''
 })
-var store = new Vuex.Store({
+
+export default new Vuex.Store({
     state: {
         isAuthenticated: false
     },
@@ -53,24 +48,3 @@ var store = new Vuex.Store({
         }
     }
 });
-import App from './App.vue';
-
-require('vue-material/dist/vue-material.css')
-
-import { routes } from './routes';
-const router = new VueRouter({ routes, mode: "history" });
-
-Vue.material.registerTheme('default', {
-    primary: 'blue',
-    accent: 'red',
-    warn: 'yellow',
-    background: 'white'
-});
-
-
-new Vue({
-    el: '#app',
-    store,
-    router,
-    render: h => h(App)
-})

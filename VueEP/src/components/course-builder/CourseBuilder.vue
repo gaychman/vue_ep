@@ -1,23 +1,32 @@
 ﻿<template>
     <div>
-        <h1>редактор</h1>
-        <div style="background: green; position: relative; width: 800px; height: 600px;">
-            <cb-resizable><div style="background: red; width: 100%; height: 100%;"></div></cb-resizable>
-        </div>
+        <md-toolbar>
+            <md-menu md-align-trigger>
+                <md-button md-menu-trigger class="md-icon-button"><md-icon>menu</md-icon></md-button>
+
+                <md-menu-content>
+                    <md-menu-item>Новый курс</md-menu-item>
+                    <md-menu-item>Загрузить курс</md-menu-item>
+                </md-menu-content>
+            </md-menu>
+            <h2 class="md-title" style="flex: 1">Конструктор курсов</h2>
+            <md-button class="md-raised" @click="returnHome()">Вернуться к порталу</md-button>
+        </md-toolbar>
+        <router-view></router-view>
     </div>
 </template>
 
 <script>
-    import Resizable from './Resizable.vue';
-
     export default {
         data() {
             return {
 
             };
         },
-        components: {
-            cbResizable: Resizable
+        methods: {
+            returnHome() {
+                this.$router.push('/');
+            }
         }
     }
 </script>
