@@ -8,29 +8,39 @@ using System.Data;
 using Dapper;
 using VueEP.Components.News;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.Extensions.Logging;
 
 namespace VueEP.Controllers
 {
     [Route("api/[controller]")]
     public class NewsController : Controller
     {
-        public IDbConnection Connection { get; }
+        public IDbConnection _connection { get; }
+        private readonly ILogger _logger;
 
-        public NewsController(IDbConnection conn)
+        public NewsController(IDbConnection conn,
+            ILogger<NewsController> logger)
         {
-            Connection = conn;
+            _connection = conn;
+            _logger = logger;
         }
 
         public async Task<IActionResult> Index()
         {
-            //var authenticateInfo = await Microsoft.AspNetCore.Authentication.AuthenticationHttpContextExtensions.AuthenticateAsync( HttpContext.Authentication.GetAuthenticateInfoAsync("Bearer");
-
-            var news = await Connection.QueryAsync<NewsModel>("SELECT TOP 5 id, date, title, description FROM news ORDER BY date DESC");
+            try { 
+            var news = await _connection.QueryAsync<NewsModel>("SELECT TOP 5 id, date, title, description FROM news ORDER BY date DESC");
             return Json(new
             {
                 isEditable = true,
                 list = news.Select(n => new { date = n.Date.ToString("dd.MM.yyyy HH:mm"), title = n.Title, description = n.Description, id = n.Id })
             });
+            }
+            catch (Exception ex)
+            {
+                Response.StatusCode = 500;
+                _logger.LogError(ex, "Ошибка при получении списка новостей");
+                return Json(new { });
+            }
         }
 
         [HttpDelete]
@@ -39,27 +49,49 @@ namespace VueEP.Controllers
         {
             try
             {
-                await Connection.ExecuteAsync("DELETE FROM news WHERE id=@id", new { id });
+                await _connection.ExecuteAsync("DELETE FROM news WHERE id=@id", new { id });
                 return Json(new { });
             }
             catch(Exception ex)
             {
+                Response.StatusCode = 500;
+                _logger.LogError(ex, "Ошибка при удалении новости");
                 return Json(new { });
             }
         }
 
         [HttpPost]
         [Authorize(Roles = "news_admin")]
-        public IActionResult Create(NewsModel model)
+        public async Task<IActionResult> Create(NewsModel model)
         {
-            return Json(new { });
+            try
+            {
+                await _connection.ExecuteAsync("INSERT INTO news (date, title, description) VALUES (@Date, @Title, @Description)", new { model.Date, model.Title, model.Description });
+                return Json(new { });
+            }
+            catch (Exception ex)
+            {
+                Response.StatusCode = 500;
+                _logger.LogError(ex, "Ошибка при добавлении новости");
+                return Json(new { });
+            }
         }
 
-        [HttpPut]
+        [HttpPatch]
         [Authorize(Roles = "news_admin")]
-        public IActionResult Modify(NewsModel model)
+        public async Task<IActionResult> Modify(NewsModel model)
         {
-            return Json(new { });
+            try
+            {
+                await _connection.ExecuteAsync("UPDATE news SET date=@Date, title=@Title, description=@Description WHERE id=@Id", new { model.Id, model.Date, model.Title, model.Description });
+                return Json(new { });
+            }
+            catch (Exception ex)
+            {
+                Response.StatusCode = 500;
+                _logger.LogError(ex, "Ошибка при обновлении новости");
+                return Json(new { });
+            }
         }
     }
 }
