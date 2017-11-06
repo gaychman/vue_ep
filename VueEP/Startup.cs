@@ -75,6 +75,7 @@ namespace VueEP
         {
             loggerFactory.AddConsole(Configuration.GetSection("Logging"));
             loggerFactory.AddDebug();
+            loggerFactory.AddFile(Configuration["Logging:File"]);
             app.Use(async (context, next) =>
             {
                 await next();
