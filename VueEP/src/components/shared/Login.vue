@@ -66,7 +66,8 @@
 <script>
     import Vue from 'vue';
     import VueAuthenticate from 'vue-authenticate';
-   
+    import * as links from '../../api-links';
+
     export default {
         data() {
             return {
@@ -80,12 +81,12 @@
         },
         methods: {
             executeLogin() {
-                this.$store.dispatch('login', { user: { Login: this.login, Password: this.password } }).then(() => {
+                this.$store.dispatch('login', { Login: this.login, Password: this.password }).then(() => {
                     this.$router.push({ path: '/news' });
                 });
             },
             executeRegister() {
-                this.$http.post('/auth/register', { Login: this.login, Password: this.password, EMail: this.email }).then(response => {
+                this.$http.post(links.USER_REGISTER_PATH, { Login: this.login, Password: this.password, EMail: this.email }).then(response => {
                     
                 }, response => {
                     

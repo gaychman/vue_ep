@@ -30,8 +30,12 @@ namespace VueEP.Components.Users
         /// </summary>
         public byte[] Salt { get; set; }
         /// <summary>
-        /// Роли пользователя
+        /// Роли в виде маски ролей
         /// </summary>
+        public Int32 RolesMask { get; set; }
+        /// <summary>
+        /// Роли пользователя
+        /// </summary>        
         public IEnumerable<String> Roles { get; set; }
         /// <summary>
         /// Получение списка сведений о пользователе
@@ -46,6 +50,10 @@ namespace VueEP.Components.Users
                     list.Add(new Claim(JwtRegisteredClaimNames.Email, EMail));
                 }
                 list.Add(new Claim(JwtRegisteredClaimNames.Sub, Id.ToString()));
+                foreach (var r in Roles)
+                {
+                    list.Add(new Claim(ClaimTypes.Role, r));
+                }
                 return list;
             }
         }

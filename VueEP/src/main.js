@@ -3,53 +3,75 @@ import VueMaterial from 'vue-material';
 import VueResource from 'vue-resource';
 import VueRouter from 'vue-router';
 import Vuex from 'vuex';
-import VueAuthenticate from 'vue-authenticate';
+import * as links from './api-links';
+import jwtDecode from 'jwt-decode';
 
 Vue.use(VueMaterial);
 Vue.use(VueResource);
 Vue.use(VueRouter);
 Vue.use(Vuex);
 
-var vueAuth = VueAuthenticate.factory(Vue.http, {
-    baseUrl: ''
-})
+const ROLE_KEY = 'http://schemas.microsoft.com/ws/2008/06/identity/claims/role';
+
 var store = new Vuex.Store({
     state: {
-        isAuthenticated: false
+        isAuthenticated: !!localStorage.accessToken,
+        user: localStorage.accessToken ? jwtDecode(localStorage.accessToken) : null,
+        // курс
+        courseData: {},
+        isCourseDirty: false,
+        courseCommands: []
     },
     getters: {
-        isAuthenticated() {
-            return vueAuth.isAuthenticated()
+        isAuthenticated: state => state.isAuthenticated,
+        user: state => state.user,
+        roles: state => {
+            if (!state.isAuthenticated) {
+                return [];
+            }
+            else {
+                if (!state.user) {
+                    return [];
+                }
+                return state.user[ROLE_KEY];
+            }
         }
     },
     mutations: {
         isAuthenticated(state, payload) {
             state.isAuthenticated = payload.isAuthenticated
+        },
+        user(state, payload) {
+            state.user = payload.user
+        },
+        courseData(date, payload) {
+            state.courseData = payload;
+            state.isDirty = false;
+            state.courseCommands = [];
         }
     },
     actions: {
         login(context, payload) {
-            vueAuth.login(payload.user, payload.requestOptions).then((response) => {
+            Vue.http.post(links.USER_LOGIN_PATH, payload).then(response => {
+                localStorage.accessToken = response.body.token;
+                context.commit('user', { user: jwtDecode(response.body.token) });
+                console.log(context.state.user);
                 context.commit('isAuthenticated', {
-                    isAuthenticated: vueAuth.isAuthenticated()
+                    isAuthenticated: !!localStorage.accessToken
                 });
-                return vueAuth.isAuthenticated() ? Promise.resolve() : Promise.reject();
-            })
+            });
         },
         logout(context) {
-            vueAuth.logout().then((response) => {
-                context.commit('isAuthenticated', {
-                    isAuthenticated: vueAuth.isAuthenticated()
-                });
-                return Promise.resolve();
-            })
+            localStorage.accessToken = null;
+            context.commit('isAuthenticated', {
+                isAuthenticated: false
+            });
         },
-        haveRole(context, role) {
-            if (!vueAuth.isAuthenticated()) {
-                return Promise.resolve(false);
-            }
-            // проверка на роли не сделана
-            return Promise.resolve(true);
+        loadCourse(context, id) {
+            context.commit('courseData', {});
+        },
+        newCourse(context, data) {
+            context.commit('courseData', data || {});
         }
     }
 });

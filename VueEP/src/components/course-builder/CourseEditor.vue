@@ -1,17 +1,3 @@
 ﻿<template>
-    <div>
-        <h1>ttt</h1>
-        <router-view></router-view>
-    </div>
+    <router-view></router-view>    
 </template>
-
-<script>
-    
-    export default {
-        data() {
-            return {
-               
-            };
-        }
-    }
-</script>

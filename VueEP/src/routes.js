@@ -26,17 +26,17 @@ export const routes = [
             {
                 path: "course-builder", component: CourseBuilder, children: [
                     {
-                        path: "", component: OpenCourse
+                        path: '', component: OpenCourse
                     },
                     {
                         path: "open-course", component: OpenCourse, name: 'open-course'
                     },
                     {
-                        path: "course-editor/:id", component: CourseEditor, name: 'course-edit', children: [
-                            { path: "", component: StructureEditor },
-                            { path: "screen-editor/:sid", component: ScreenEditor, name: 'screen-edit' }                            
+                        path: "course-editor/:id", component: CourseEditor, children: [
+                            { path: '', component: StructureEditor, name: 'course-edit' },
+                            { path: 'screen-editor/:sid', component: ScreenEditor, name: 'screen-editor' }                            
                         ]
-                    },
+                    }
                 ]
             },           
             { path: "ipr", component: IPR }
@@ -46,10 +46,8 @@ export const routes = [
         path: "*", component: NotFound
     }
 
-    /*{ path: '/', component: News },
-    { path: '/news', component: News },
+    /*
     { path: '/tests-admin', component: TestsAdmin },
-    { path: '/course-builder', component: CourseBuilder },
-    { path: '/course-builder/:id', component: CourseBuilder },
+ 
     */
 ];

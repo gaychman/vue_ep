@@ -14,7 +14,7 @@
             </md-card-header>
             <md-card-content v-html="n.description"></md-card-content>
             <md-card-actions v-if="isEditable">
-                <md-button @click="deleteNews(n)">Удалить</md-button>
+                <md-button @click="deleteNews(n.id)">Удалить</md-button>
                 <md-button @click="editNews(n)">Редактировать</md-button>
             </md-card-actions>
         </md-card>
@@ -25,6 +25,11 @@
                     <md-input-container>
                         <label>Заголовок</label>
                         <md-input required v-model="dlgData.title"></md-input>
+                    </md-input-container>
+
+                    <md-input-container>
+                        <label>Текст новости</label>
+                        <md-textarea required v-model="dlgData.text"></md-textarea>
                     </md-input-container>
                 </form>
             </md-dialog-content>
@@ -37,6 +42,8 @@
 </template>
 
 <script>
+    import * as links from '../../api-links';
+
     export default {
         data() {
             return {
@@ -50,7 +57,8 @@
         },
         computed: {
             isEditable() {
-                return this.$store.dispatch('haveRole', 'news_admin');
+                debugger
+                return this.$store.getters.roles.indexOf('news_admin') >= 0;
             }
         },
         created() {
@@ -58,7 +66,7 @@
         },
         methods: {
             deleteNews(id) {
-                this.$http.delete('/api/news', { id }).then(response => {
+                this.$http.delete(links.NEWS_PATH, { params: { id } }).then(response => {
                     loadList();
                 });
             },
@@ -68,7 +76,7 @@
             loadList() {
                 this.isLoading = true;
                 this.errorMessage = null;
-                this.$http.get('/api/news').then(response => {
+                this.$http.get(links.NEWS_PATH).then(response => {
                     this.news = response.body.list;
                     this.isEditable = response.body.isEditable;
                     this.isLoading = false;
@@ -78,7 +86,7 @@
                 });
             },
             showAddNewsDialog() {
-
+                this.$refs["news-edit-dialog"].open();
             }
         }
     }
