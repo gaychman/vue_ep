@@ -13,6 +13,13 @@ Vue.use(Vuex);
 
 const ROLE_KEY = 'http://schemas.microsoft.com/ws/2008/06/identity/claims/role';
 
+Vue.http.interceptors.push(function (request, next) {
+    if (localStorage.accessToken) {
+        request.headers.set('Authorization', 'Bearer ' + localStorage.accessToken);
+    }
+    next();
+});
+
 var store = new Vuex.Store({
     state: {
         isAuthenticated: !!localStorage.accessToken,

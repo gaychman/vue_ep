@@ -57,7 +57,6 @@
         },
         computed: {
             isEditable() {
-                debugger
                 return this.$store.getters.roles.indexOf('news_admin') >= 0;
             }
         },
@@ -67,7 +66,7 @@
         methods: {
             deleteNews(id) {
                 this.$http.delete(links.NEWS_PATH, { params: { id } }).then(response => {
-                    loadList();
+                    this.loadList();
                 });
             },
             editNews(n) {
