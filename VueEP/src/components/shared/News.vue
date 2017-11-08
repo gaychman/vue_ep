@@ -29,7 +29,7 @@
 
                     <md-input-container>
                         <label>Текст новости</label>
-                        <md-textarea required v-model="dlgData.text"></md-textarea>
+                        <md-textarea required v-model="dlgData.description"></md-textarea>
                     </md-input-container>
                 </form>
             </md-dialog-content>
@@ -51,7 +51,7 @@
                 isLoading: false,
                 errorMessage: null,
                 dlgData: {
-                    dlgTitle: '', title: '', date: '', description: ''
+                    dlgTitle: '', title: '', date: '', description: '', id: 0
                 }
             };
         },
@@ -64,12 +64,38 @@
             this.loadList();
         },
         methods: {
+            closeDialog() {
+                this.$refs['news-edit-dialog'].close();    
+            },                
+            saveData() {
+                this.$refs['news-edit-dialog'].close();
+                this.errorMessage = null;
+                if (0 == this.dlgData.id) {
+                    this.$http.post(links.NEWS_PATH, this.dlgData).then(response => {
+                        this.loadList();
+                    }, response => {
+                        this.errorMessage = response.statusText;                        
+                    });
+                }
+                else {                    
+                    this.$http.patch(links.NEWS_PATH, this.dlgData).then(response => {
+                        this.loadList();
+                    }, response => {
+                        this.errorMessage = response.statusText;
+                    });
+                }
+            },
             deleteNews(id) {
                 this.$http.delete(links.NEWS_PATH, { params: { id } }).then(response => {
                     this.loadList();
                 });
             },
             editNews(n) {
+                this.dlgData.dlgTitle = 'Изменить новость';
+                this.dlgData.title = n.title;
+                this.dlgData.date = n.date;
+                this.dlgData.description = n.description;
+                this.dlgData.id = n.id;
                 this.$refs["news-edit-dialog"].open();
             },
             loadList() {
@@ -85,6 +111,11 @@
                 });
             },
             showAddNewsDialog() {
+                this.dlgData.dlgTitle = 'Добавить новость';
+                this.dlgData.title = '';
+                this.dlgData.date = new Date();
+                this.dlgData.description = '';
+                this.dlgData.id;
                 this.$refs["news-edit-dialog"].open();
             }
         }

@@ -24,7 +24,10 @@ namespace VueEP.Controllers
             _connection = conn;
             _logger = logger;
         }
-
+        /// <summary>
+        /// Получение списка новостей
+        /// </summary>
+        /// <returns></returns>
         public async Task<IActionResult> Index()
         {
             try { 
@@ -59,11 +62,15 @@ namespace VueEP.Controllers
                 return Json(new { });
             }
         }
-
+        /// <summary>
+        /// Создание новости
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
         [HttpPost]
         [Authorize(Roles = "news_admin")]
-        public async Task<IActionResult> Create(NewsModel model)
-        {
+        public async Task<IActionResult> Create([FromBody]NewsModel model)
+        {            
             try
             {
                 await _connection.ExecuteAsync("INSERT INTO news (date, title, description) VALUES (@Date, @Title, @Description)", new { model.Date, model.Title, model.Description });
@@ -76,11 +83,16 @@ namespace VueEP.Controllers
                 return Json(new { });
             }
         }
-
+        /// <summary>
+        /// Изменение новости
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
         [HttpPatch]
         [Authorize(Roles = "news_admin")]
-        public async Task<IActionResult> Modify(NewsModel model)
+        public async Task<IActionResult> Modify([FromBody]NewsModel model)
         {
+            model.Date = DateTime.Now;
             try
             {
                 await _connection.ExecuteAsync("UPDATE news SET date=@Date, title=@Title, description=@Description WHERE id=@Id", new { model.Id, model.Date, model.Title, model.Description });
