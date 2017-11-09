@@ -28,13 +28,22 @@
                 this.exec_drag(event, (dx, dy) => { this.x += dx; this.width -= dx; });
             },
             drag_n(event) {
-                this.exec_drag(event, (dx, dy) => { this.y += dy; this.height -= dx; });
+                this.exec_drag(event, (dx, dy) => { this.y += dy; this.height -= dy; });
             },
             drag_s(event) {
                 this.exec_drag(event, (dx, dy) => { this.height += dy; });
             },
             drag_se(event) {
                 this.exec_drag(event, (dx, dy) => { this.height += dy; this.width += dx; });
+            },
+            drag_sw(event) {
+                this.exec_drag(event, (dx, dy) => { this.height += dy; this.x += dx; this.width -= dx; });
+            },
+            drag_ne(event) {
+                this.exec_drag(event, (dx, dy) => { this.height -= dy; this.y += dy; this.width += dx; });
+            },
+            drag_nw(event) {
+                this.exec_drag(event, (dx, dy) => { this.height -= dy; this.y += dy; this.width -= dx; this.x += dx; });
             },
             exec_drag(event, fn) {
                 var old_handler = document.onmousemove;
