@@ -12,10 +12,14 @@ namespace VueEP.Components.CourseBuilder
         /// <summary>
         /// Ширина курса в пикселях, если null - подстройка под размер экрана
         /// </summary>
-        public Int32? Width;
+        public Int32? Width { get; set; }
         /// <summary>
         /// Высота курса в пикселях, если null - подстройка под размер экрана
         /// </summary>
-        public Int32? Height;
+        public Int32? Height { get; set; }
+        /// <summary>
+        /// Название курса
+        /// </summary>
+        public String Name { get; set; }   
     }
 }

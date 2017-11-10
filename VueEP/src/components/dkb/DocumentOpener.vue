@@ -10,7 +10,7 @@
             </md-tab>
 
             <md-tab md-label="Выбрать из ДБЗ">
-                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Deserunt dolorum quas amet cum vitae, omnis! Illum quas voluptatem, expedita iste, dicta ipsum ea veniam dolore in, quod saepe reiciendis nihil.</p>
+                <p></p>
             </md-tab>
         </md-tabs>
     </div>
@@ -23,6 +23,7 @@
                 state: 0,
                 documents: [{name: 'test', id: 1}]
             };
-        }
+        },
+        props: ['initial-catalog', 'types']
     }
 </script>

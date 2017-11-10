@@ -115,7 +115,7 @@
                 this.dlgData.title = '';
                 this.dlgData.date = new Date();
                 this.dlgData.description = '';
-                this.dlgData.id;
+                this.dlgData.id = 0;
                 this.$refs["news-edit-dialog"].open();
             }
         }

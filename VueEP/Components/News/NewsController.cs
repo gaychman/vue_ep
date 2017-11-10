@@ -15,14 +15,14 @@ namespace VueEP.Controllers
     [Route("api/[controller]")]
     public class NewsController : Controller
     {
-        public IDbConnection _connection { get; }
-        private readonly ILogger _logger;
+        private IDbConnection connection { get; }
+        private ILogger logger { get; }
 
         public NewsController(IDbConnection conn,
             ILogger<NewsController> logger)
         {
-            _connection = conn;
-            _logger = logger;
+            this.connection = conn;
+            this.logger = logger;
         }
         /// <summary>
         /// Получение списка новостей
@@ -31,7 +31,7 @@ namespace VueEP.Controllers
         public async Task<IActionResult> Index()
         {
             try { 
-            var news = await _connection.QueryAsync<NewsModel>("SELECT TOP 5 id, date, title, description FROM news ORDER BY date DESC");
+            var news = await connection.QueryAsync<NewsModel>("SELECT TOP 5 id, date, title, description FROM news ORDER BY date DESC");
             return Json(new
             {
                 isEditable = true,
@@ -41,7 +41,7 @@ namespace VueEP.Controllers
             catch (Exception ex)
             {
                 Response.StatusCode = 500;
-                _logger.LogError(ex, "Ошибка при получении списка новостей");
+                logger.LogError(ex, "Ошибка при получении списка новостей");
                 return Json(new { });
             }
         }
@@ -52,13 +52,13 @@ namespace VueEP.Controllers
         {
             try
             {
-                await _connection.ExecuteAsync("DELETE FROM news WHERE id=@id", new { id });
+                await connection.ExecuteAsync("DELETE FROM news WHERE id=@id", new { id });
                 return Json(new { });
             }
             catch(Exception ex)
             {
                 Response.StatusCode = 500;
-                _logger.LogError(ex, "Ошибка при удалении новости");
+                logger.LogError(ex, "Ошибка при удалении новости");
                 return Json(new { });
             }
         }
@@ -73,13 +73,13 @@ namespace VueEP.Controllers
         {            
             try
             {
-                await _connection.ExecuteAsync("INSERT INTO news (date, title, description) VALUES (@Date, @Title, @Description)", new { model.Date, model.Title, model.Description });
+                await connection.ExecuteAsync("INSERT INTO news (date, title, description) VALUES (@Date, @Title, @Description)", new { model.Date, model.Title, model.Description });
                 return Json(new { });
             }
             catch (Exception ex)
             {
                 Response.StatusCode = 500;
-                _logger.LogError(ex, "Ошибка при добавлении новости");
+                logger.LogError(ex, "Ошибка при добавлении новости");
                 return Json(new { });
             }
         }
@@ -95,13 +95,13 @@ namespace VueEP.Controllers
             model.Date = DateTime.Now;
             try
             {
-                await _connection.ExecuteAsync("UPDATE news SET date=@Date, title=@Title, description=@Description WHERE id=@Id", new { model.Id, model.Date, model.Title, model.Description });
+                await connection.ExecuteAsync("UPDATE news SET date=@Date, title=@Title, description=@Description WHERE id=@Id", new { model.Id, model.Date, model.Title, model.Description });
                 return Json(new { });
             }
             catch (Exception ex)
             {
                 Response.StatusCode = 500;
-                _logger.LogError(ex, "Ошибка при обновлении новости");
+                logger.LogError(ex, "Ошибка при обновлении новости");
                 return Json(new { });
             }
         }

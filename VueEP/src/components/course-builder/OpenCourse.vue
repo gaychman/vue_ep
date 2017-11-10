@@ -1,8 +1,6 @@
 ﻿<template>
-    <div>
-        
-
-        <doc-opener></doc-opener>
+    <div>        
+        <doc-opener type="10" @selected="selectDocument($event)"></doc-opener>
     </div>
 </template>
 
@@ -16,7 +14,9 @@
             };
         },
         methods: {
-            
+            selectDocument(doc) {
+
+            }
         },
         components: {
             docOpener: DocumentOpener
