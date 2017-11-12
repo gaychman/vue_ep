@@ -15,14 +15,14 @@ namespace VueEP.Controllers
     [Route("api/[controller]")]
     public class NewsController : Controller
     {
-        private IDbConnection connection { get; }
-        private ILogger logger { get; }
+        private IDbConnection Connection { get; }
+        private ILogger Logger { get; }
 
         public NewsController(IDbConnection conn,
             ILogger<NewsController> logger)
         {
-            this.connection = conn;
-            this.logger = logger;
+            this.Connection = conn;
+            this.Logger = logger;
         }
         /// <summary>
         /// Получение списка новостей
@@ -30,18 +30,19 @@ namespace VueEP.Controllers
         /// <returns></returns>
         public async Task<IActionResult> Index()
         {
-            try { 
-            var news = await connection.QueryAsync<NewsModel>("SELECT TOP 5 id, date, title, description FROM news ORDER BY date DESC");
-            return Json(new
-            {
-                isEditable = true,
-                list = news.Select(n => new { date = n.Date.ToString("dd.MM.yyyy HH:mm"), title = n.Title, description = n.Description, id = n.Id })
-            });
+            try
+            { 
+                var news = await Connection.QueryAsync<NewsModel>("SELECT TOP 5 id, date, title, description FROM news ORDER BY date DESC");
+                return Json(new
+                {
+                    isEditable = true,
+                    list = news.Select(n => new { date = n.Date.ToString("dd.MM.yyyy HH:mm"), title = n.Title, description = n.Description, id = n.Id })
+                });
             }
             catch (Exception ex)
             {
                 Response.StatusCode = 500;
-                logger.LogError(ex, "Ошибка при получении списка новостей");
+                Logger.LogError(ex, "Ошибка при получении списка новостей");
                 return Json(new { });
             }
         }
@@ -52,13 +53,13 @@ namespace VueEP.Controllers
         {
             try
             {
-                await connection.ExecuteAsync("DELETE FROM news WHERE id=@id", new { id });
+                await Connection.ExecuteAsync("DELETE FROM news WHERE id=@id", new { id });
                 return Json(new { });
             }
             catch(Exception ex)
             {
                 Response.StatusCode = 500;
-                logger.LogError(ex, "Ошибка при удалении новости");
+                Logger.LogError(ex, "Ошибка при удалении новости");
                 return Json(new { });
             }
         }
@@ -73,13 +74,13 @@ namespace VueEP.Controllers
         {            
             try
             {
-                await connection.ExecuteAsync("INSERT INTO news (date, title, description) VALUES (@Date, @Title, @Description)", new { model.Date, model.Title, model.Description });
+                await Connection.ExecuteAsync("INSERT INTO news (date, title, description) VALUES (@Date, @Title, @Description)", new { model.Date, model.Title, model.Description });
                 return Json(new { });
             }
             catch (Exception ex)
             {
                 Response.StatusCode = 500;
-                logger.LogError(ex, "Ошибка при добавлении новости");
+                Logger.LogError(ex, "Ошибка при добавлении новости");
                 return Json(new { });
             }
         }
@@ -95,13 +96,13 @@ namespace VueEP.Controllers
             model.Date = DateTime.Now;
             try
             {
-                await connection.ExecuteAsync("UPDATE news SET date=@Date, title=@Title, description=@Description WHERE id=@Id", new { model.Id, model.Date, model.Title, model.Description });
+                await Connection.ExecuteAsync("UPDATE news SET date=@Date, title=@Title, description=@Description WHERE id=@Id", new { model.Id, model.Date, model.Title, model.Description });
                 return Json(new { });
             }
             catch (Exception ex)
             {
                 Response.StatusCode = 500;
-                logger.LogError(ex, "Ошибка при обновлении новости");
+                Logger.LogError(ex, "Ошибка при обновлении новости");
                 return Json(new { });
             }
         }

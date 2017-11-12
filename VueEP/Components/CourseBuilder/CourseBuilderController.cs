@@ -12,6 +12,7 @@ using System.Data;
 using Dapper;
 using System.Security.Claims;
 using System.IdentityModel.Tokens.Jwt;
+using VueEP.Components;
 
 namespace VueEP.Controllers
 {
@@ -46,25 +47,22 @@ namespace VueEP.Controllers
         public async Task<IActionResult> Create([FromBody]CourseDescription model)
         {
             try
-            {
-                var user = User.Identity as ClaimsIdentity;
-                if (null == user)
-                {
-                    throw new Exception("Пользователь не авторизован");
-                }
-                var id_claim = user.Claims.FirstOrDefault(x => x.Type == JwtRegisteredClaimNames.Sub);
-                if(null == id_claim)
-                {
-                    throw new Exception("Идентификатор пользователя не задан");
-                }
+            {                
+                // добавляем в MongoDB
                 BsonDocument doc = new BsonDocument { { "name", model.Name }, { "width", model.Width }, { "height", model.Height } };
                 var collection = MongoDB.GetCollection<BsonDocument>("courses");
                 await collection.InsertOneAsync(doc);
                 // добавляем в ДБЗ
-                await Connection.ExecuteAsync("INSERT INTO documents (name, roles, type, creator_id, is_private, modification_date, status, external_ref) VALUES (@name, @roles, @type, @creator_id, @is_private, @modification_date, @status, @external_ref)", 
-                    new { name = model.Name, roles = 0, type = VueEP.Components.DKB.NodeTypes.COURSE, creator_id = Int32.Parse(id_claim.Value), is_private = true, modification_date = DateTime.Now, status = 0, external_ref = doc.AsObjectId});
-                // добавляем в MongoDB
-                
+                try
+                {
+                    await Connection.ExecuteAsync("INSERT INTO documents (name, roles, type, creator_id, is_private, modification_date, status, external_ref) VALUES (@name, @roles, @type, @creator_id, @is_private, @modification_date, @status, @external_ref)",
+                        new { name = model.Name, roles = 0, type = VueEP.Components.DKB.NodeTypes.COURSE, creator_id = User.Identity.Id(), is_private = true, modification_date = DateTime.Now, status = 0, external_ref = doc["_id"].AsObjectId.ToString() });
+                }
+                catch(Exception)
+                {
+                    await collection.DeleteOneAsync<BsonDocument>(d => d["_id"] == doc["_id"]);
+                    throw;
+                }
                 return Json(new { });
             }
             catch (Exception ex)

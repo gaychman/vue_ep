@@ -50,6 +50,8 @@ namespace VueEP.Components.Users
                     list.Add(new Claim(JwtRegisteredClaimNames.Email, EMail));
                 }
                 list.Add(new Claim(JwtRegisteredClaimNames.Sub, Id.ToString()));
+                list.Add(new Claim(CustomClaims.ID, Id.ToString()));
+                list.Add(new Claim(CustomClaims.ROLES_MASK, RolesMask.ToString()));
                 foreach (var r in Roles)
                 {
                     list.Add(new Claim(ClaimTypes.Role, r));

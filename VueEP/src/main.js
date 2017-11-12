@@ -20,10 +20,19 @@ Vue.http.interceptors.push(function (request, next) {
     next();
 });
 
+function safeJwtDecode(s) {
+    try {
+        return jwtDecode(s);
+    }
+    catch (ex) {
+        console.log(ex.message);
+    }
+}
+
 var store = new Vuex.Store({
     state: {
         isAuthenticated: !!localStorage.accessToken,
-        user: localStorage.accessToken ? jwtDecode(localStorage.accessToken) : null,
+        user: localStorage.accessToken ? safeJwtDecode(localStorage.accessToken) : null,
         // курс
         courseData: {},
         isCourseDirty: false,
@@ -61,7 +70,7 @@ var store = new Vuex.Store({
         login(context, payload) {
             Vue.http.post(links.USER_LOGIN_PATH, payload).then(response => {
                 localStorage.accessToken = response.body.token;
-                context.commit('user', { user: jwtDecode(response.body.token) });
+                context.commit('user', { user: safeJwtDecode(response.body.token) });
                 console.log(context.state.user);
                 context.commit('isAuthenticated', {
                     isAuthenticated: !!localStorage.accessToken

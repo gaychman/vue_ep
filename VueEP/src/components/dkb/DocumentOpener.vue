@@ -17,13 +17,28 @@
 </template>
 
 <script>
+    import * as links from '../../api-links';
+
     export default {
         data() {
             return {
                 state: 0,
-                documents: [{name: 'test', id: 1}]
+                documents: []
             };
         },
-        props: ['initial-catalog', 'types']
+        props: ['initial-catalog', 'type'],
+        created() {
+            this.loadMyList();
+        },
+        methods: {
+            loadMyList() {
+                this.$http.get(links.DKB_MYLIST_PATH, {type: this.type}).then(response => {
+                    this.documents = response.body.list;
+
+                }, response => {
+
+                });
+            }
+        }
     }
 </script>
