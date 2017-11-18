@@ -13,8 +13,6 @@ using VueEP.Components;
 
 namespace VueEP.Controllers
 {
-    //[Produces("application/json")]
-    //[Route("api/dkb")]
     public class DKBController : Controller
     {
         private IDbConnection Connection { get; }
@@ -28,7 +26,7 @@ namespace VueEP.Controllers
         }
 
         [Route("api/dkb/mylist")]
-        //[Authorize]
+        [Authorize]
         public async Task<IActionResult> MyDocuments(Int32? type)
         {
             try

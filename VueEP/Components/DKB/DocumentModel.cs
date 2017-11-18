@@ -10,7 +10,7 @@ namespace VueEP.Components.DKB
         /// <summary>
         /// Идентификатор документа
         /// </summary>
-        public Int32 Id { get; set; }
+        public Guid Id { get; set; }
         /// <summary>
         /// Название документа
         /// </summary>

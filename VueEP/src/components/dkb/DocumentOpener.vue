@@ -32,7 +32,7 @@
         },
         methods: {
             loadMyList() {
-                this.$http.get(links.DKB_MYLIST_PATH, {type: this.type}).then(response => {
+                this.$http.get(links.DKB_MYLIST_PATH, { params: { type: this.type } }).then(response => {
                     this.documents = response.body.list;
 
                 }, response => {

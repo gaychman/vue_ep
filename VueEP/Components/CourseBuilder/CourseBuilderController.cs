@@ -53,10 +53,11 @@ namespace VueEP.Controllers
                 var collection = MongoDB.GetCollection<BsonDocument>("courses");
                 await collection.InsertOneAsync(doc);
                 // добавляем в ДБЗ
+                Guid id = Guid.NewGuid();
                 try
                 {
-                    await Connection.ExecuteAsync("INSERT INTO documents (name, roles, type, creator_id, is_private, modification_date, status, external_ref) VALUES (@name, @roles, @type, @creator_id, @is_private, @modification_date, @status, @external_ref)",
-                        new { name = model.Name, roles = 0, type = VueEP.Components.DKB.NodeTypes.COURSE, creator_id = User.Identity.Id(), is_private = true, modification_date = DateTime.Now, status = 0, external_ref = doc["_id"].AsObjectId.ToString() });
+                    await Connection.ExecuteAsync("INSERT INTO documents (id, name, roles, type, creator_id, is_private, modification_date, status, external_ref) VALUES (@id, @name, @roles, @type, @creator_id, @is_private, @modification_date, @status, @external_ref)",
+                        new { id, name = model.Name, roles = 0, type = VueEP.Components.DKB.NodeTypes.COURSE, creator_id = User.Identity.Id(), is_private = true, modification_date = DateTime.Now, status = 0, external_ref = doc["_id"].AsObjectId.ToString() });
                 }
                 catch(Exception)
                 {
