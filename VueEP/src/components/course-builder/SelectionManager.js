@@ -1,5 +1,5 @@
 ﻿import Vue from 'vue';
-import * as selection_types from 'selection_types';
+import * as selection_types from './selection_types';
 
 export class SelectionManager {
     constructor() {

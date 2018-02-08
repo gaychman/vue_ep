@@ -1,4 +1,4 @@
-﻿import * as selection_types from 'selection_types';
+﻿import * as selection_types from './selection_types';
 
 export class Selectable {
     constructor(obj, event_bus) {

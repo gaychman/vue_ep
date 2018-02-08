@@ -47,12 +47,16 @@
 <script>
     import Resizable from './Resizable.vue';
     import Bar from './objects/Bar.vue';
+    import SelectionManager from './SelectionManager';
+    import Selectable from './Selectable';
 
     export default {
         data() {
             return {
+                selectionManager: new SelectionManager(),
                 id: this.$route.params.id,
-                objects: [{ type: "bar", x: 10, y: 50, width: 400, height: 300, color: "red" }, { type: "bar", x: 150, y: 50, width: 200, height: 130, color: "green" }]
+                objects: [{ type: "bar", x: 10, y: 50, width: 400, height: 300, color: "red" }, { type: "bar", x: 150, y: 50, width: 200, height: 130, color: "green" }],
+                selectables: {}
             };
         },
         watch: {
@@ -63,6 +67,12 @@
         components: {
             cbResizable: Resizable,
             objBar: Bar
+        },        
+        created: function () {
+            for (var object of this.objects) {
+                this.selectables[object] = new Selectable(object, );
+                this.selectionManager.register(object);
+            }
         }
     }
 </script>
