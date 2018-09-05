@@ -6,7 +6,7 @@ Vue.use(Vuex);
 
 var vueAuth = VueAuthenticate.factory(Vue.http, {
     baseUrl: ''
-})
+});
 
 export default new Vuex.Store({
     state: {
@@ -14,12 +14,12 @@ export default new Vuex.Store({
     },
     getters: {
         isAuthenticated() {
-            return vueAuth.isAuthenticated()
+            return vueAuth.isAuthenticated();
         }
     },
     mutations: {
         isAuthenticated(state, payload) {
-            state.isAuthenticated = payload.isAuthenticated
+            state.isAuthenticated = payload.isAuthenticated;
         }
     },
     actions: {
@@ -29,7 +29,7 @@ export default new Vuex.Store({
                     isAuthenticated: vueAuth.isAuthenticated()
                 });
                 return vueAuth.isAuthenticated() ? Promise.resolve() : Promise.reject();
-            })
+            });
         },
         logout(context) {
             vueAuth.logout().then((response) => {
@@ -37,7 +37,7 @@ export default new Vuex.Store({
                     isAuthenticated: vueAuth.isAuthenticated()
                 });
                 return Promise.resolve();
-            })
+            });
         },
         haveRole(context, role) {
             if (!vueAuth.isAuthenticated()) {

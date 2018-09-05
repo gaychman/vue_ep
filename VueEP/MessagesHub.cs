@@ -10,7 +10,7 @@ namespace VueEP
     {
         public async Task InboxChanged(Int32 UserId)
         {
-            await Clients.AllExcept(new[] { UserId.ToString() }).InvokeAsync("OnInboxChanged", UserId);
+            await Clients.AllExcept(new[] { UserId.ToString() }).SendAsync("OnInboxChanged", UserId);
         }
     }
 }

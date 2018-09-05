@@ -13,7 +13,7 @@
                 <div class="md-subhead">{{ n.date }}</div>
             </md-card-header>
             <md-card-content v-html="n.description"></md-card-content>
-            <md-card-actions v-if="isEditable">
+            <md-card-actions v-if="isEditable()">
                 <md-button @click="deleteNews(n.id)">Удалить</md-button>
                 <md-button @click="editNews(n)">Редактировать</md-button>
             </md-card-actions>
@@ -57,7 +57,8 @@
         },
         computed: {
             isEditable() {
-                return this.$store.getters.roles.indexOf('news_admin') >= 0;
+                //return this.$store.getters.roles.indexOf('news_admin') >= 0;
+                return true;
             }
         },
         created() {
@@ -70,7 +71,7 @@
             saveData() {
                 this.$refs['news-edit-dialog'].close();
                 this.errorMessage = null;
-                if (0 == this.dlgData.id) {
+                if (0 === this.dlgData.id) {
                     this.$http.post(links.NEWS_PATH, this.dlgData).then(response => {
                         this.loadList();
                     }, response => {
